@@ -1,0 +1,6 @@
+[submodule "catkin_ws/src/fiducials"]
+	path = catkin_ws/src/fiducials
+	url = https://github.com/UbiquityRobotics/fiducials.git
+[submodule "catkin_ws/src/vision_opencv"]
+	path = catkin_ws/src/vision_opencv
+	url = https://github.com/ros-perception/vision_opencv.git
