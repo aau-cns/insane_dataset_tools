@@ -4,3 +4,6 @@
 [submodule "catkin_ws/src/vision_opencv"]
 	path = catkin_ws/src/vision_opencv
 	url = https://github.com/ros-perception/vision_opencv.git
+[submodule "tools/fex/export_fig"]
+	path = tools/fex/export_fig
+	url = https://github.com/altmany/export_fig.git
