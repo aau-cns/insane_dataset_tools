@@ -8,9 +8,9 @@ The INSANE data set is a multi-sensor cross-domain UAV data set (18 sensors) wit
 
 This data set is ideal for testing novel algorithms with real-world sensor data and corresponding effects such as sensor degradation. Dedicated raw data for customized sensor calibration routines and vibration data for vehicle integrity tests are provided.
 
-**Preprint** available at: https://arxiv.org/abs/2210.09114
+**Preprint** available on [ArXiv](https://arxiv.org/abs/2210.09114)
 
-**Data set** available on our webpage: https://www.aau.at/intelligente-systemtechnologien/control-of-networked-systems/datasets/
+**Data set** available on our [University Webpage](https://www.aau.at/en/smart-systems-technologies/control-of-networked-systems/datasets/insane-dataset/)
 
 **Data set Features:**
 
