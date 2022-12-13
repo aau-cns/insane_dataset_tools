@@ -338,14 +338,14 @@ def write_img_msg(csv_file, topic_name, bag, sensor_name, seq):
             image_msg.header.frame_id = 'world'  # World frame
 
             # Record message into the bag file
-            bag.write(topic_name+"/image_raw", image_msg, time)
+            bag.write(topic_name + "/image_raw", image_msg, time)
 
             # Add empty camera info msg
             cam_info_msg = CameraInfo()
             cam_info_msg.header.seq = seq
             cam_info_msg.header.stamp = time
 
-            bag.write(topic_name+"/camera_info", cam_info_msg, time)
+            bag.write(topic_name + "/camera_info", cam_info_msg, time)
     print('...done')
     return
 
@@ -382,14 +382,14 @@ def write_img_stereo_msg(csv_file, topic_name, bag, sensor_name, seq):
                 pre_topic_name = topic_name + "2"
 
             # Record message into the bag file
-            bag.write(pre_topic_name+"/image_raw", image_msg, time)
+            bag.write(pre_topic_name + "/image_raw", image_msg, time)
 
             # Add empty camera info msg
             cam_info_msg = CameraInfo()
             cam_info_msg.header.seq = seq
             cam_info_msg.header.stamp = time
 
-            bag.write(pre_topic_name+"/camera_info", cam_info_msg, time)
+            bag.write(pre_topic_name + "/camera_info", cam_info_msg, time)
     print('...done')
     return
 
@@ -447,7 +447,6 @@ def main():
     sensor_list.append(data_module("ground_truth", "ground_truth_8hz.csv", "/gt", write_pose_msg))
     sensor_list.append(data_module("ground_truth_interpolated", "ground_truth_80hz.csv", "/gt_inter", write_pose_msg))
 
-
     # Check if files for the defined sensors exist and associate the file path
     not_found_sensors = []
     print("Found file for: ")
@@ -476,6 +475,6 @@ def main():
             if sensor.found:
                 sensor.export_fun(sensor.path, sensor.topic, bagfile, sensor.name, 1)
 
+
 if __name__ == "__main__":
     main()
-
