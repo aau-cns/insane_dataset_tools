@@ -64,12 +64,14 @@ if insane_file_structure
     mod1_sensor_token = "*mod1*";
     mod2_sensor_token = "*mod2*";
     mocap_sensor_token = "*_mocap_*";
+    fiducial_sensor_token = "*_fiducial_*";
     rs_img_token = "*rs_img*";
     ids_img = "*ids*";
 else
     mod1_sensor_token = "*.bag";
     mod2_sensor_token = "*.bag";
     mocap_sensor_token = "*.bag";
+    fiducial_sensor_token = "*.bag";
     rs_img_token = "*.bag";
     ids_img = "*.bag";
 end
@@ -246,6 +248,26 @@ if ~isempty(mocap_tag_board.t)
     mocap_tag_board.mean.q = Quaternion(T_mw_mto).double;
     
 end
+
+%% Fiducial Marker Detection Messages
+% Check if dedicated fiducial bag exists, if not use module 1 bag file
+if ~isempty(dir(data_path+sensor_folder + fiducial_sensor_token))
+    fiducial_marker_bagfiles_list = dir(fullfile(data_path+sensor_folder, fiducial_sensor_token));
+    for k=1:length(fiducial_marker_bagfiles_list)
+        fiducial_marker_bagfiles(k) = string(fullfile(fiducial_marker_bagfiles_list(k).folder, fiducial_marker_bagfiles_list(k).name));
+
+        fiducial_marker_bag(k) = ros.Bag(char(fiducial_marker_bagfiles(k)));
+
+        if verbose
+            fiducial_marker_bag(k).info()
+        end
+    end
+else
+    fprintf("[INFO] No dedicated Fiducial Bagfile found, assuming its in the Module 1 Bagfile\n")
+    fiducial_marker_bag = mod1_sensor_bag;
+end
+
+[fiducial_markers.tag_data, fiducial_markers.tags_detected] = read_fiducial_marker_msgs(fiducial_marker_bag, "/marker_detections");
 
 %% Module 2 topics
 mod2_sensor_bagfiles_list = dir(fullfile(data_path+sensor_folder, mod2_sensor_token));
@@ -1390,6 +1412,51 @@ if save_csv
         dlmwrite(csv_export_dir + filename, csv_mocap_tag_board, '-append', 'delimiter', ',', 'precision', 17);
     end
     
+    if ~isempty(fiducial_markers.tag_data)
+        
+        % Detected dags
+        tag_ids_string = "[" + sprintf('%.0f,' , fiducial_markers.tags_detected) + "]";
+        
+        filename = "fiducial_marker.csv";
+        fprintf("Writing %s\n", filename);
+        csv_fid = fopen(csv_export_dir + filename, 'w+');
+        
+        header = "t, ";
+        for i = 1 : length(fiducial_markers.tags_detected)
+            marker_id = fiducial_markers.tags_detected(i);
+            header = header + "ex_" + int2str(marker_id) + ", p_x_" + int2str(marker_id) + ", p_y_" + int2str(marker_id) + ", p_z_" + int2str(marker_id) + ", q_w_" + int2str(marker_id) + ", q_x_" + int2str(marker_id) + ", q_y_" + int2str(marker_id) + ", q_z_" + int2str(marker_id) + ", ";
+        end
+        header_char = convertStringsToChars(header);
+        header = convertCharsToStrings(header_char(1:end-2));  % Remove the last comma and space
+        
+        fprintf(csv_fid,'%s\n', header);
+        fclose(csv_fid);
+        
+        num_columns = 1 + 8 * length(fiducial_markers.tags_detected);
+        num_rows = length(fiducial_markers.tag_data);
+        csv_fiducial_markers = zeros(num_rows, num_columns);
+        
+%         csv_fiducial_markers(:, 1) = fiducial_markers.tag_data.t;
+        for i = 1:length(fiducial_markers.tag_data)
+            %TODO: why is the code two lines before that not working?
+            csv_fiducial_markers(i, 1) = fiducial_markers.tag_data(i).t;
+            for j = 1:length(fiducial_markers.tag_data(i).data)
+                marker_id = fiducial_markers.tag_data(i).data(j).id;
+                idx = find(fiducial_markers.tags_detected == marker_id);
+                csv_fiducial_markers(i, 2 + (idx-1)*8) = 1;  % measurement exists
+                csv_fiducial_markers(i, 3 + (idx-1)*8 : 5 + (idx-1)*8) = fiducial_markers.tag_data(i).data(j).pose.translation;
+                csv_fiducial_markers(i, 6 + (idx-1)*8 : 9 + (idx-1)*8) = fiducial_markers.tag_data(i).data(j).pose.rotation;
+            end
+        end
+        
+        % Generate csv data and write to file
+        mat_save_var{end+1}='fiducial_marker';
+        example_header = "t, ex_0, p_x_0, p_y_0, p_z_0, q_w_0, q_x_0, q_y_0, q_z_0, ..., ex_n, p_x_n, p_y_n, p_z_n, q_w_n, q_x_n, q_y_n, q_z_n";
+        fprintf(rm_fid, "Fiducial Marker Pose format: \n\t[" + example_header + "]\n\tFiducial Tag IDs: " + tag_ids_string + "\n" + sensor_stats_from_csv(csv_fiducial_markers));
+        dlmwrite(csv_export_dir + filename, csv_fiducial_markers, '-append', 'delimiter', ',', 'precision', 17);
+        
+    end
+        
     if rs_imu_combined
         if exist("rs_imu")
             if ~isempty(rs_imu.t)

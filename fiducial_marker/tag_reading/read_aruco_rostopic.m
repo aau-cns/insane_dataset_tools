@@ -14,6 +14,13 @@ function [tag_data, tags_detected] = read_aruco_rostopic(bag, topic)
 
 msgs  = bag.readAll(char(topic));
 
+if isempty(msgs)
+    tag_data = [];
+    tags_detected = [];
+    fprintf("[WARNING] No Messages Found\n");
+    return
+end
+
 %% Read all tag data into a defined tag datastructure
 local_counter = 1;
 tags_available = [];
@@ -21,27 +28,27 @@ for k = 1:length(msgs)
     stamp = cat(1,msgs{1,k}.header.stamp.time);
     id = horzcat(msgs{k}.transforms.fiducial_id);
     pose = horzcat(msgs{k}.transforms.transform);
-
+    
     len_ids = length(id);
-
+    
     if len_ids == 0
         continue
     end
-
+    
     tags_available = unique([tags_available, id]);
-
+    
     aruco_detections(local_counter).t = stamp;
     aruco_detections(local_counter).detections = len_ids;
-
+    
     for i = 1:len_ids
         aruco_detections(local_counter).data(i).id = id(i);
         aruco_detections(local_counter).data(i).pose.translation = pose(i).translation;
-
+        
         % transform msg defines the quaternion xyzw, here we use wxyz
         rotation = pose(i).rotation;
         aruco_detections(local_counter).data(i).pose.rotation = [rotation(4); rotation(1:3)];
     end
-
+    
     local_counter = local_counter + 1;
 end
 
