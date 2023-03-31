@@ -16,32 +16,37 @@ disp('Reading NavSat GPS Coordinates msgs...');
 topic = char(topic);
 
 seg_begin = 1;
-
+stamp=[];
+latitude=[];
+longitude=[];
+altitude=[];
+cov=[];
 for k = 1 : length(bag)
     msgs  = bag(k).readAll(topic);
-
+    
     if isempty(msgs)
-        stamp=[];
-        latitude=[];
-        longitude=[];
-        altitude=[];
-        cov=[];
-        fprintf("[WARNING] No Messages Found\n");
-        return
+        fprintf("[WARNING] No Messages Found in Bag " + int2str(k) + "\n");
+        continue;
     end
-
+    
     next_size = length(msgs);
     seg_end = seg_begin + next_size-1;
-
-    [stamp(seg_begin:seg_end), latitude(seg_begin:seg_end),...
-        longitude(seg_begin:seg_end), ...
-        altitude(seg_begin:seg_end), cov(:,seg_begin:seg_end)] = gps_navsat(msgs);
-
+    
+    if isempty(stamp)
+        [stamp, latitude, longitude, altitude, cov] = gps_navsat(msgs);
+    else
+        [stamp(seg_begin:seg_end), latitude(seg_begin:seg_end),...
+            longitude(seg_begin:seg_end), ...
+            altitude(seg_begin:seg_end), cov(:,seg_begin:seg_end)] = gps_navsat(msgs);
+    end
+    
     seg_begin = seg_begin + next_size;
     fprintf('Done: File %i\n',k)
 end
 clear msgs;
-
+if isempty(stamp)
+    fprintf("[WARNING] No Messages Found\n");
+end
 disp('DONE Reading NavSat GPS Coordinates msgs...');
 
 end

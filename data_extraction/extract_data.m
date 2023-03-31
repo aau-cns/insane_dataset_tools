@@ -213,11 +213,15 @@ end
 %% MoCap Topic
 % Check if dedicated MoCap file exists, if not, use the module 1 bag file
 if ~isempty(dir(data_path+sensor_folder + mocap_sensor_token))
-    mocap_sensor_bagfiles = strcat(ls(data_path+sensor_folder + mocap_sensor_token));
-    
-    mocap_sensor_bag = ros.Bag(char(mocap_sensor_bagfiles));
-    if verbose
-        mocap_sensor_bag.info()
+    mocap_sensor_bagfiles_list = dir(fullfile(data_path+sensor_folder, mocap_sensor_token));
+    for k=1:length(mocap_sensor_bagfiles_list)
+        mocap_sensor_bagfiles(k) = string(fullfile(mocap_sensor_bagfiles_list(k).folder, mocap_sensor_bagfiles_list(k).name));
+
+        mocap_sensor_bag(k) = ros.Bag(char(mocap_sensor_bagfiles(k)));
+
+        if verbose
+            mocap_sensor_bag(k).info()
+        end
     end
 else
     fprintf("[INFO] No dedicated MoCap Bagfile found, assuming its in the Module 1 Bagfile\n")

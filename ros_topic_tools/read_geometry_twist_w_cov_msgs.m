@@ -16,29 +16,35 @@ disp('Reading Geometry Twist with Cov msgs...');
 topic = char(topic);
 
 seg_begin = 1;
+stamp = [];
+linear = [];
+angular = [];
 
 for k = 1 : length(bag)
     msgs  = bag(k).readAll(topic);
-
+    
     if isempty(msgs)
-        stamp = [];
-        linear = [];
-        angular = [];
-        fprintf("[WARNING] No Messages Found\n");
-        return
+        fprintf("[WARNING] No Messages Found in Bag " + int2str(k) + "\n");
+        continue;
     end
-
+    
     next_size = length(msgs);
     seg_end = seg_begin + next_size-1;
-
-    [stamp(seg_begin:seg_end), linear(:,seg_begin:seg_end),...
-        angular(:,seg_begin:seg_end)] = geometry_twist_msgs(msgs);
-
+    
+    if isempty(stamp)
+        [stamp, linear, angular] = geometry_twist_msgs(msgs);
+    else
+        [stamp(seg_begin:seg_end), linear(:,seg_begin:seg_end),...
+            angular(:,seg_begin:seg_end)] = geometry_twist_msgs(msgs);
+    end
+    
     seg_begin = seg_begin + next_size;
     fprintf('Done: File %i\n',k)
 end
 clear msgs;
-
+if isempty(stamp)
+    fprintf("[WARNING] No Messages Found\n");
+end
 disp('DONE Reading Geometry Twist with Cov msgs...');
 
 end

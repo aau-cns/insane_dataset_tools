@@ -16,21 +16,34 @@ disp('Reading Pose msgs...');
 topic = char(topic);
 
 seg_begin = 1;
+stamp = [];
+position = [];
+orientation = [];
 
 for k = 1 : length(bag)
     msgs  = bag(k).readAll(topic);
-
+    
+    if isempty(msgs)
+        fprintf("[WARNING] No Messages Found in Bag " + int2str(k) + "\n");
+        continue;
+    end
+    
     next_size = length(msgs);
     seg_end = seg_begin + next_size-1;
-
-    [stamp(seg_begin:seg_end), position(:,seg_begin:seg_end),...
-        orientation(:,seg_begin:seg_end)] = pose_msgs(msgs);
-
+    
+    if isempty(stamp)
+        [stamp, position, orientation] = pose_msgs(msgs);
+    else
+        [stamp(seg_begin:seg_end), position(:,seg_begin:seg_end), orientation(:,seg_begin:seg_end)] = pose_msgs(msgs);
+    end
+    
     seg_begin = seg_begin + next_size;
     fprintf('Done: File %i\n',k)
 end
 clear msgs;
-
+if isempty(stamp)
+    fprintf("[WARNING] No Messages Found\n");
+end
 disp('DONE Reading Pose msgs...');
 
 end
@@ -45,7 +58,7 @@ orientation(:,len) = [0 0 0 0].';
 for k = 1:length(msgs)
     stamp(k) = cat(1,msgs{1,k}.header.stamp.time);
     position(:,k) = cat(1,msgs{1,k}.pose.position);
-
+    
     q_tmp = cat(1,msgs{1,k}.pose.orientation);
     orientation(:,k) = [q_tmp(4); q_tmp(1:3)]; % w,x,y,z
 end

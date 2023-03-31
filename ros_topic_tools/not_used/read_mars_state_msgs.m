@@ -14,36 +14,43 @@ function [stamp, p_wi, v_wi, q_wi, r_wi_eul, b_w, b_a, cov_full] = read_mars_sta
 disp('Reading Mars States msgs...');
 topic = char(topic);
 seg_begin = 1;
+stamp = [];
+p_wi = [];
+v_wi = [];
+q_wi = [];
+r_wi_eul = [];
+b_w = [];
+b_a = [];
+cov_full = [];
 
 for k = 1 : length(bag)
     msgs  = bag(k).readAll(topic);
 
     if isempty(msgs)
-        stamp = [];
-        p_wi = [];
-        v_wi = [];
-        q_wi = [];
-        r_wi_eul = [];
-        b_w = [];
-        b_a = [];
-        cov_full = [];
-
-        fprintf("[WARNING] No Messages Found\n");
-        return
+        fprintf("[WARNING] No Messages Found in Bag " + int2str(k) + "\n");
+        continue;
     end
 
     next_size = length(msgs);
     seg_end = seg_begin + next_size-1;
-
-    [stamp(seg_begin:seg_end), p_wi(:,seg_begin:seg_end),v_wi(:,seg_begin:seg_end),...
+    
+    if isempty(stamp)
+        [stamp, p_wi, v_wi, q_wi, r_wi_eul, b_w, b_a, cov_full] = MagneticFieldSensorMessage(msgs);
+    else
+        [stamp(seg_begin:seg_end), p_wi(:,seg_begin:seg_end),v_wi(:,seg_begin:seg_end),...
         q_wi(:,seg_begin:seg_end),r_wi_eul(:,seg_begin:seg_end), b_w(:,seg_begin:seg_end),b_a(:,seg_begin:seg_end), cov_full(:,:,seg_begin:seg_end)]...
         = MagneticFieldSensorMessage(msgs);
+    end
+
+    
 
     seg_begin = seg_begin + next_size;
     fprintf('Done: File %i\n',k)
 end
 clear msgs;
-
+if isempty(stamp)
+    fprintf("[WARNING] No Messages Found\n");
+end
 disp('DONE Reading Mars States msgs...');
 
 end

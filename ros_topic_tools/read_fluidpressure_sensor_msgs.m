@@ -16,28 +16,33 @@ disp('Reading Fluid Pressure msgs...');
 topic = char(topic);
 
 seg_begin = 1;
+stamp = [];
+fluid_pressure = [];
 
 for k = 1 : length(bag)
     msgs  = bag(k).readAll(topic);
     
     if isempty(msgs)
-        stamp = [];
-        fluid_pressure = [];
-        
-        fprintf("[WARNING] No Messages Found\n");
-        return
+        fprintf("[WARNING] No Messages Found in Bag " + int2str(k) + "\n");
+        continue;
     end
     
     next_size = length(msgs);
     seg_end = seg_begin + next_size-1;
     
-    [stamp(seg_begin:seg_end), fluid_pressure(:,seg_begin:seg_end)] = fluid_pressure_sensor_msgs(msgs);
+    if isempty(stamp)
+        [stamp, fluid_pressure] = fluid_pressure_sensor_msgs(msgs);
+    else
+        [stamp(seg_begin:seg_end), fluid_pressure(:,seg_begin:seg_end)] = fluid_pressure_sensor_msgs(msgs);
+    end
     
     seg_begin = seg_begin + next_size;
     fprintf('Done: File %i\n',k)
 end
 clear msgs;
-
+if isempty(stamp)
+    fprintf("[WARNING] No Messages Found\n");
+end
 disp('DONE Reading Fluid Pressure msgs...');
 
 end

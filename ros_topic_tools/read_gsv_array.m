@@ -23,12 +23,12 @@ gsv_array.stamp = zeros(1,length(msgs));
 for k = 1:length(msgs)
     % Time for messages
     gsv_array.stamp(k) = cat(1,msgs{1,k}.header.stamp.time);
-
+    
     gsv_array.number_of_sv(k) = cat(1,msgs{1,k}.number_of_sv);
-
+    
     gsv_array.sat_prn_nr(:,k) = cat(1,msgs{1,k}.gsv_array.sat_prn_nr);
     gsv_array.snr(:,k) = cat(1,msgs{1,k}.gsv_array.snr);
-
+    
 end
 
 disp('DONE Reading gsv array msgs...');

@@ -16,31 +16,37 @@ disp('Reading IMU msgs...');
 topic = char(topic);
 
 seg_begin = 1;
+stamp = [];
+linear_acc = [];
+angular_vel = [];
+orientation = [];
 
 for k = 1 : length(bag)
     msgs  = bag(k).readAll(topic);
-
+    
     if isempty(msgs)
-        stamp = [];
-        linear_acc = [];
-        angular_vel = [];
-        orientation = [];
-        fprintf("[WARNING] No Messages Found\n");
-        return
+        fprintf("[WARNING] No Messages Found in Bag " + int2str(k) + "\n");
+        continue;
     end
-
+    
     next_size = length(msgs);
     seg_end = seg_begin + next_size-1;
-
-    [stamp(seg_begin:seg_end), linear_acc(:,seg_begin:seg_end),...
-        angular_vel(:,seg_begin:seg_end), ...
-        orientation(seg_begin:seg_end)] = imu_sensor_msgs(msgs);
-
+    
+    if isempty(stamp)
+        [stamp, linear_acc, angular_vel, orientation] = imu_sensor_msgs(msgs);
+    else
+        [stamp(seg_begin:seg_end), linear_acc(:,seg_begin:seg_end),...
+            angular_vel(:,seg_begin:seg_end), ...
+            orientation(seg_begin:seg_end)] = imu_sensor_msgs(msgs);
+    end
+    
     seg_begin = seg_begin + next_size;
     fprintf('Done: File %i\n',k)
 end
 clear msgs;
-
+if isempty(stamp)
+    fprintf("[WARNING] No Messages Found\n");
+end
 disp('DONE Reading IMU msgs...');
 
 end

@@ -14,27 +14,33 @@ function [stamp, mag_vector] = read_magneticfield_msgs(bag,topic)
 disp('Reading Magnetic Field msgs...');
 
 seg_begin = 1;
+stamp = [];
+mag_vector = [];
 
 for k = 1 : length(bag)
     msgs  = bag(k).readAll(topic);
-
+    
     if isempty(msgs)
-        stamp = [];
-        mag_vector = [];
-        fprintf("[WARNING] No Messages Found\n");
-        return
+        fprintf("[WARNING] No Messages Found in Bag " + int2str(k) + "\n");
+        continue;
     end
-
+    
     next_size = length(msgs);
     seg_end = seg_begin + next_size-1;
-
-    [stamp(seg_begin:seg_end), mag_vector(:,seg_begin:seg_end)] = MagneticFieldSensorMessage(msgs);
-
+    
+    if isempty(stamp)
+        [stamp, mag_vector] = MagneticFieldSensorMessage(msgs);
+    else
+        [stamp(seg_begin:seg_end), mag_vector(:,seg_begin:seg_end)] = MagneticFieldSensorMessage(msgs);
+    end
+    
     seg_begin = seg_begin + next_size;
     fprintf('Done: File %i\n',k)
 end
 clear msgs;
-
+if isempty(stamp)
+    fprintf("[WARNING] No Messages Found\n");
+end
 disp('DONE Reading Magnetometer msgs...');
 
 end

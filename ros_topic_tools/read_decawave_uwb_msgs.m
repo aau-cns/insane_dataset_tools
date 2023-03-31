@@ -16,29 +16,36 @@ disp('Reading Decawave UWB msgs...');
 topic = char(topic);
 
 seg_begin = 1;
-
+stamp = [];
+dist = [];
+valid = [];
 for k = 1 : length(bag)
     msgs  = bag(k).readAll(topic);
     
     if isempty(msgs)
-        stamp = [];
-        dist = [];
-        valid = [];
-        fprintf("[WARNING] No Messages Found\n");
-        return
+        fprintf("[WARNING] No Messages Found in Bag " + int2str(k) + "\n");
+        continue;
     end
     
     next_size = length(msgs);
     seg_end = seg_begin + next_size-1;
     
-    [stamp(seg_begin:seg_end), dist(:,seg_begin:seg_end),...
-        valid(:,seg_begin:seg_end)] = decawave_uwb_msgs(msgs);
+    if isempty(stamp)
+        [stamp, dist, valid] = decawave_uwb_msgs(msgs);
+    else
+        [stamp(seg_begin:seg_end), dist(:,seg_begin:seg_end),...
+            valid(:,seg_begin:seg_end)] = decawave_uwb_msgs(msgs);
+    end
+    
+    
     
     seg_begin = seg_begin + next_size;
     fprintf('Done: File %i\n',k)
 end
 clear msgs;
-
+if isempty(stamp)
+    fprintf("[WARNING] No Messages Found\n");
+end
 disp('DONE Reading Decawave UWB msgs...');
 
 end
