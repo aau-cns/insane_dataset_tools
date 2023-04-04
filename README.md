@@ -58,6 +58,13 @@ If you want to use a docker container, please also install the following depende
 $ apt-get install ffmpeg libsm6 libxext6
 ```
 
+Alternatively, we provide a Conda environment.yml file containing all the necessary dependencies for the Python scripts. The file can be found in the `conda_environment` directory. The Conda environment can be simply created and activated with:
+
+```sh
+$ conda env create -f env_insane.yml
+$ conda activate insane_dataset_tools
+```
+
 ## ROS Dependencies
 
 The data set uses two non-standard ROS messages `MotorSpeed.msg` and `TagDistance.msg`. Both message definitions are located in `catkin_ws/src/insane_msgs`. These messages have to be build for the export script and further usage.
