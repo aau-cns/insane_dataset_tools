@@ -18,6 +18,7 @@ topic = char(topic);
 
 seg_begin = 1;
 tags_detected = [];
+tag_data = [];
 
 for k = 1 : length(bag)
     [tag_data_bag, tags_detected_bag] = read_aruco_rostopic(bag(k), topic);
@@ -30,7 +31,11 @@ for k = 1 : length(bag)
     next_size = length(tag_data_bag);
     seg_end = seg_begin + next_size-1;
     
-    tag_data(seg_begin:seg_end) = tag_data_bag;
+    if isempty(tag_data)
+        tag_data = tag_data_bag;
+    else
+        tag_data(seg_begin:seg_end) = tag_data_bag;
+    end
     tags_detected = unique([tags_detected, tags_detected_bag]);
     seg_begin = seg_begin + next_size;
     fprintf('Done: File %i\n',k)
