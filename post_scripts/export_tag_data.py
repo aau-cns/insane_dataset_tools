@@ -310,7 +310,7 @@ def main(argv):
 
                         # Check if transforms exist and write them
                         if pose:
-                            # Generate message for the camera poses w.r.t. the marker frame
+                            # Generate message for the marker poses w.r.t. the camera frame
                             marker_transform = FiducialTransformArray()
                             marker_transform.header = img_msg_in.header
                             # Map pose/transform array

@@ -10,7 +10,7 @@
 
 function [tag_data, tags_detected] = read_aruco_rostopic(bag, topic)
 %READ_ARUCO_ROSTOPIC Writes all tag detections timeslot in an array structure
-%   The transformations are the position of the camera w.r.t. the tag frame
+%   The transformations are the position of the tag w.r.t. the camera frame
 
 msgs  = bag.readAll(char(topic));
 

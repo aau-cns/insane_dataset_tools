@@ -209,7 +209,7 @@ The script will read multiple bagfiles, undistort the images based on the pinhol
 
 - Export the undistorted images to an output bagfile (can be deactivated if not needed)
 - Apply an optional Black/White filter to the images before marker detection (for debugging)
-- Detect marker and determine the camera pose w.r.t. the marker (using the marker information in `tag_info.yaml`)
+- Detect marker and determine the marker pose w.r.t. the camera frame (using the marker information in `tag_info.yaml`)
 - Write undistorted images with marker detection indicators and Black/White images to a bagfile for post-verification (separate, thus easy to delete after verification)
 
 ```Python
