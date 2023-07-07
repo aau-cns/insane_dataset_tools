@@ -42,14 +42,37 @@ $ git clone --recurse-submodules https://github.com/aau-cns/insane_dataset_tools
 
 The majority of the scripts are Matlab files and do not require external dependencies. A few post-processing scripts are written in Python and require additional packages and a dedicated catkin workspace for custom ROS messages.
 
+## Docker Build and Run
+The docker image is published with updates to [Dockerhub](https://hub.docker.com/r/aaucns/insane_dataset_env).
+If you want to build the image yourself, you can do so with
+
+```sh
+$ cd insane_dataset_tools
+$ docker build --network=host -t aaucns/insane_export_env:latest -f ./docker/dockerfile . # Build the Docker image
+```
+
+Either way, you can then use the container do e.g. export csv data to rosbags by executing the following
+
+```sh
+# The following runs the container, maps the data in the current folder
+# and executes 'csv2bag.py'
+$ cd <folder_with_the_csv_files>
+$ docker run -it --rm \
+  --network=host \
+  -v "$(pwd)":/data \
+  aaucns/insane_dataset_env:latest
+```
+
+The generated ROS bag will be in the same folder.
+
 ## System Dependencies
 
 Dependencies can be installed as follows:
 
 ```sh
-$ apt-get install python3 python3-pip python3-catkin-tools opencv-contrib-python \
+$ apt-get install python3 python3-pip python3-catkin-tools  \
   ros-noetic-tf ros-noetic-cv-bridge ros-noetic-image-transport
-$ pip3 install -U rospkg numpy tqdm scipy py3rosmsgs pycryptodomex
+$ pip3 install -U rospkg numpy tqdm scipy py3rosmsgs pycryptodomex opencv-contrib-python
 ```
 
 If you want to use a docker container, please also install the following dependencies for CV2:

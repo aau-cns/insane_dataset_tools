@@ -1,0 +1,29 @@
+FROM ros:noetic-ros-core
+
+LABEL maintainer="Christian Brommer <christian.brommer@aau.at>"
+LABEL description="INSANE Export Environment"
+
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    vim \
+    build-essential \
+    python3 python3-pip python3-catkin-tools \
+    ros-noetic-tf ros-noetic-cv-bridge ros-noetic-image-transport \
+    ros-noetic-tf2-geometry-msgs ros-noetic-dynamic-reconfigure \
+    ffmpeg libsm6 libxext6 \
+    && rm -rf /var/lib/apt/lists/*
+    
+RUN pip3 install -U rospkg numpy tqdm scipy py3rosmsgs pycryptodomex opencv-contrib-python
+
+COPY catkin_ws /catkin_ws
+WORKDIR /catkin_ws
+RUN /bin/bash -c '. /opt/ros/noetic/setup.bash; catkin build fiducial_msgs insane_msgs;'
+
+COPY post_scripts/csv2bag.py /
+
+RUN mkdir /data
+WORKDIR /data
+
+SHELL ["/bin/bash", "-c"]
+CMD  source /catkin_ws/devel/setup.bash && ../csv2bag.py
