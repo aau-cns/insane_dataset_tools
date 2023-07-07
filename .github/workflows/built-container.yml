@@ -59,7 +59,6 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: >
              docker buildx build \
-               -f ./docker/dockerfile \ 
                --platform=${PLATFORMS} \
                --tag ${IMAGE_URL}/${IMAGE_NAME}:latest \
                --tag ${IMAGE_URL}/${IMAGE_NAME}:${COMMIT_HASH::6} \
