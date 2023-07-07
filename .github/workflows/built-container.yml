@@ -15,9 +15,6 @@ name: Docker Container Build
 on:
   push:
     branches: [ "main", "development" ]
-    paths:
-      - 'docker/**'
-      - '.github/workflows/build-container.yml'
 
 jobs:
   build_env:
@@ -32,6 +29,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+        with:
+          submodules: recursive
 
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v2
@@ -54,13 +53,14 @@ jobs:
                --platform=${PLATFORMS} \
                --tag ${IMAGE_URL}/${IMAGE_NAME}:dev \
                --tag ${IMAGE_URL}/${IMAGE_NAME}:${COMMIT_HASH::6} \
-               --compress --force-rm --push ./docker/
+               --compress --force-rm --push -f ./docker/dockerfile .
 
       - name: Build Docker Image (stable)
         if: github.ref == 'refs/heads/main'
         run: >
              docker buildx build \
+               -f ./docker/dockerfile \ 
                --platform=${PLATFORMS} \
                --tag ${IMAGE_URL}/${IMAGE_NAME}:latest \
                --tag ${IMAGE_URL}/${IMAGE_NAME}:${COMMIT_HASH::6} \
-               --compress --force-rm --push ./docker/
+               --compress --force-rm --push -f ./docker/dockerfile .
