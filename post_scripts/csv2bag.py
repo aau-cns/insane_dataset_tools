@@ -69,7 +69,7 @@ def write_imu_msg(csv_file, topic_name, bag, sensor_name, seq):
 
 
 def write_mag_msg(csv_file, topic_name, bag, sensor_name, seq):
-    print('Reading ' + sensor_name + ' Data')
+    print('Writing ' + sensor_name + ' data to Bag...')
 
     mag_msg = MagneticField()
 
@@ -94,7 +94,7 @@ def write_mag_msg(csv_file, topic_name, bag, sensor_name, seq):
 
 
 def write_baro_msg(csv_file, topic_name, bag, sensor_name, seq):
-    print('Reading ' + sensor_name + ' Data')
+    print('Writing ' + sensor_name + ' data to Bag...')
 
     baro_msg = FluidPressure()
 
@@ -117,7 +117,7 @@ def write_baro_msg(csv_file, topic_name, bag, sensor_name, seq):
 
 
 def write_uwb_msg(csv_file, topic_name, bag, sensor_name, seq):
-    print('Reading ' + sensor_name + ' Data')
+    print('Writing ' + sensor_name + ' data to Bag...')
 
     uwb_msg = TagDistance()
 
@@ -146,7 +146,7 @@ def write_uwb_msg(csv_file, topic_name, bag, sensor_name, seq):
 
 
 def write_rpm_msg(csv_file, topic_name, bag, sensor_name, seq):
-    print('Reading ' + sensor_name + ' Data')
+    print('Writing ' + sensor_name + ' data to Bag...')
 
     rpm_msg = MotorSpeed()
 
@@ -171,7 +171,7 @@ def write_rpm_msg(csv_file, topic_name, bag, sensor_name, seq):
 
 
 def write_lrf_msg(csv_file, topic_name, bag, sensor_name, seq):
-    print('Reading ' + sensor_name + ' Data')
+    print('Writing ' + sensor_name + ' data to Bag...')
 
     lrf_msg = Range()
 
@@ -196,7 +196,7 @@ def write_lrf_msg(csv_file, topic_name, bag, sensor_name, seq):
 
 
 def write_gps_vel_msg(csv_file, topic_name, bag, sensor_name, seq):
-    print('Reading ' + sensor_name + ' Data')
+    print('Writing ' + sensor_name + ' data to Bag...')
 
     gps_vel_msg = TwistWithCovarianceStamped()
 
@@ -222,7 +222,7 @@ def write_gps_vel_msg(csv_file, topic_name, bag, sensor_name, seq):
 
 
 def write_gps_coord_msg(csv_file, topic_name, bag, sensor_name, seq):
-    print('Reading ' + sensor_name + ' Data')
+    print('Writing ' + sensor_name + ' data to Bag...')
 
     gps_coord_msg = NavSatFix()
 
@@ -252,7 +252,7 @@ def write_gps_coord_msg(csv_file, topic_name, bag, sensor_name, seq):
 
 
 def write_gps_enu_msg(csv_file, topic_name, bag, sensor_name, seq):
-    print('Reading ' + sensor_name + ' Data')
+    print('Writing ' + sensor_name + ' data to Bag...')
 
     gps_enu_msg = PoseWithCovarianceStamped()
 
@@ -282,7 +282,7 @@ def write_gps_enu_msg(csv_file, topic_name, bag, sensor_name, seq):
 
 
 def write_pose_msg(csv_file, topic_name, bag, sensor_name, seq):
-    print('Reading ' + sensor_name + ' Data')
+    print('Writing ' + sensor_name + ' data to Bag...')
 
     pose_msg = PoseStamped()
 
@@ -312,7 +312,8 @@ def write_pose_msg(csv_file, topic_name, bag, sensor_name, seq):
 
 
 def write_img_msg(csv_file, topic_name, bag, sensor_name, seq):
-    print('Reading ' + sensor_name + ' Data')
+    print('Writing ' + sensor_name + ' data to Bag...')
+    
     img_folder = "img"
     cv_bridge = CvBridge()
 
@@ -351,7 +352,8 @@ def write_img_msg(csv_file, topic_name, bag, sensor_name, seq):
 
 
 def write_img_stereo_msg(csv_file, topic_name, bag, sensor_name, seq):
-    print('Reading ' + sensor_name + ' Data')
+    print('Writing ' + sensor_name + ' data to Bag...')
+    
     img_folder = "img"
     cv_bridge = CvBridge()
 
